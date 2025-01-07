@@ -1,0 +1,16 @@
+[
+    {
+        "bookingID": "1",
+        "date": "2025-01-15",
+        "time": "13:00",
+        "service": "",
+        "customer": {}
+    },
+    {
+        "bookingID": "2",
+        "date": "2025-01-17",
+        "time": "10:00",
+        "service": "",
+        "customer": {}
+    }
+]
