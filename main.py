@@ -59,6 +59,15 @@ class App:
         self.available_bookings_table = ttk.Treeview(self.available_bookings_frame)
         self.available_bookings_table.pack(fill=tk.BOTH, expand=True)
 
+        # Körs när en selektion görs/ändras
+        def onChange(event):
+            ...
+            table = event.widget
+
+            selected_item = table.selection()
+
+            print(table.item(selected_item[0], "values"))
+
         bookings = self.booking_repo.get_available_bookings()
 
         columns = ["Datum", "Tid", ""]
@@ -80,6 +89,8 @@ class App:
                 "Välj tid",       # Placeholder for "Knapp"
             ]
             self.available_bookings_table.insert("", "end", values=row)
+        
+        self.available_bookings_table.bind("<<TreeviewSelect>>", onChange)
 
         # Boka tid titel
         self.booking_title = ttk.Label(self.booking_frame, text="Boka tid", font=("", 25))
@@ -88,14 +99,18 @@ class App:
         # Välj datum
         self.choose_date_label = ttk.Label(self.booking_frame, text="Datum:")
         self.choose_date_label.grid(row=1, column=0)
-        self.choose_date_combobox = ttk.Combobox(self.booking_frame)
-        self.choose_date_combobox.grid(row=1, column=1)
+        self.active_booking_date = tk.StringVar()
+        self.active_booking_date.set("Tom")
+        self.choose_date_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_date, state=tk.DISABLED, foreground="white")
+        self.choose_date_entry.grid(row=1, column=1)
 
         # Välj tid
         self.choose_time_label = ttk.Label(self.booking_frame, text="Tid:")
         self.choose_time_label.grid(row=2, column=0)
-        self.choose_time_combobox = ttk.Combobox(self.booking_frame)
-        self.choose_time_combobox.grid(row=2, column=1)
+        self.active_booking_time = tk.StringVar()
+        self.active_booking_time.set("20:00")
+        self.choose_time_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_time, state=tk.DISABLED, foreground="white")
+        self.choose_time_entry.grid(row=2, column=1)
 
         # För och efternamn
         self.full_name_label = ttk.Label(self.booking_frame, text="För och efternamn:")
