@@ -11,7 +11,7 @@ class App:
 
         # Titel, storlek
         self.root.title("Däckfirma")
-        self.root.geometry("700x450")
+        self.root.geometry("900x400")
 
         # Repo för bokning och...
         self.booking_repo = BookingRepositary("bookings.json")
@@ -59,14 +59,18 @@ class App:
         self.available_bookings_table = ttk.Treeview(self.available_bookings_frame)
         self.available_bookings_table.pack(fill=tk.BOTH, expand=True)
 
-        # Körs när en selektion görs/ändras
+        # Körs när en treeview selektion görs/ändras
         def onChange(event):
-            ...
             table = event.widget
-
             selected_item = table.selection()
+            # Packa upp tupeln till variabler
+            date, time, _ = table.item(selected_item, "values")
 
-            print(table.item(selected_item[0], "values"))
+            self.active_booking_date.set(date)
+            self.choose_date_entry.config(foreground="white")
+
+            self.active_booking_time.set(time)
+            self.choose_time_entry.config(foreground="white")
 
         bookings = self.booking_repo.get_available_bookings()
 
@@ -99,17 +103,16 @@ class App:
         # Välj datum
         self.choose_date_label = ttk.Label(self.booking_frame, text="Datum:")
         self.choose_date_label.grid(row=1, column=0)
-        self.active_booking_date = tk.StringVar()
-        self.active_booking_date.set("Tom")
-        self.choose_date_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_date, state=tk.DISABLED, foreground="white")
+        self.active_booking_date_filled = tk.BooleanVar()
+        self.active_booking_date = tk.StringVar(value="Välj från tillgängliga tider...")
+        self.choose_date_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_date, state=tk.DISABLED)
         self.choose_date_entry.grid(row=1, column=1)
 
         # Välj tid
         self.choose_time_label = ttk.Label(self.booking_frame, text="Tid:")
         self.choose_time_label.grid(row=2, column=0)
-        self.active_booking_time = tk.StringVar()
-        self.active_booking_time.set("20:00")
-        self.choose_time_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_time, state=tk.DISABLED, foreground="white")
+        self.active_booking_time = tk.StringVar(value="Välj från tillgängliga tider...")
+        self.choose_time_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_time, state=tk.DISABLED)
         self.choose_time_entry.grid(row=2, column=1)
 
         # För och efternamn
