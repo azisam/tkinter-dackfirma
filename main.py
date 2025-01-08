@@ -59,29 +59,34 @@ class App:
         self.available_bookings_table = ttk.Treeview(self.available_bookings_frame)
         self.available_bookings_table.pack(fill=tk.BOTH, expand=True)
 
+        # Boknings ID
+        self.booking_id = tk.StringVar()
+
         # Körs när en treeview selektion görs/ändras
         def onChange(event):
             table = event.widget
-            selected_item = table.selection()
-            # Packa upp tupeln till variabler
-            date, time, _ = table.item(selected_item, "values")
 
+            id = table.focus() # Boknings ID för fokuserad treeview rad
+            selected = table.selection()
+            date, time, _ = table.item(selected, "values") # Delar upp tupel:en till variabler
+
+            # Sätter in dem nya värderna
+            self.booking_id.set(id)
             self.active_booking_date.set(date)
             self.active_booking_time.set(time)
 
         bookings = self.booking_repo.get_available_bookings()
 
-        columns = ["Datum", "Tid", ""]
+        columns = ("Datum", "Tid", "")
 
         self.available_bookings_table['columns'] = columns
 
-        # Döljer den första kolumnen (#0)
+        # Döljer en första tom kolumn (#0)
         self.available_bookings_table.column("#0", width=0, stretch=False)
-        self.available_bookings_table.heading("#0", text="")
 
-        for col in columns:
-            self.available_bookings_table.column(col, width=100, anchor="center")
-            self.available_bookings_table.heading(col, text=col)
+        for column in columns:
+            self.available_bookings_table.column(column, width=100, anchor="center")
+            self.available_bookings_table.heading(column, text=column)
 
         for booking in bookings:
             row = [
@@ -89,7 +94,7 @@ class App:
                 booking["time"],  # Map "Tid" to "time"
                 "Välj tid",       # Placeholder for "Knapp"
             ]
-            self.available_bookings_table.insert("", "end", values=row)
+            self.available_bookings_table.insert("", "end", values=row, iid=booking["bookingID"])
         
         self.available_bookings_table.bind("<<TreeviewSelect>>", onChange)
 
@@ -142,11 +147,11 @@ class App:
 
 
     def onClickBookingBtn(self):
-        id = "2" # Hårdkodat för nuläget
+        id = self.booking_id.get()
         full_name = self.full_name_entry.get()
         email = self.entry_email.get()
         service = self.services[self.radio_choice.get()]
-        customer = {"fullName": full_name, "email": email}
+        customer = { "fullName": full_name, "email": email }
 
         self.booking_repo.book_time(id, service, customer)
 
