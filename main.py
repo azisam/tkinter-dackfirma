@@ -94,7 +94,7 @@ class App:
                 booking["time"],  # Map "Tid" to "time"
                 "Välj tid",       # Placeholder for "Knapp"
             ]
-            self.available_bookings_table.insert("", "end", values=row, iid=booking["bookingID"])
+            self.available_bookings_table.insert("", "end", values=row, iid=booking["id"])
         
         self.available_bookings_table.bind("<<TreeviewSelect>>", onChange)
 

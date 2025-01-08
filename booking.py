@@ -11,10 +11,9 @@ class Booking:
 
     def dictionary(self):
         return {
-            "bookingID": self.booking_id,
+            "id": self.id,
             "date": self.date,
             "time": self.time,
             "service": self.service,
-            "isBooked": self.isBooked,
-            "customer": {} # {"firstName": "Joe", "lastName": "Doe", "email": "joe.doe@email.com"}
+            "customer": self.customer
         }

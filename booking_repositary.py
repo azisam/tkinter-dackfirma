@@ -25,7 +25,7 @@ class BookingRepositary:
 
         # Loop:a igenom och leta efter matchande ID
         for booking in bookings:
-            if booking["bookingID"] == id:
+            if booking["id"] == id:
                 booking["service"] = service
                 booking["customer"] = customer
 
