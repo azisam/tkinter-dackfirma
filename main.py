@@ -67,10 +67,7 @@ class App:
             date, time, _ = table.item(selected_item, "values")
 
             self.active_booking_date.set(date)
-            self.choose_date_entry.config(foreground="white")
-
             self.active_booking_time.set(time)
-            self.choose_time_entry.config(foreground="white")
 
         bookings = self.booking_repo.get_available_bookings()
 
@@ -103,7 +100,6 @@ class App:
         # Välj datum
         self.choose_date_label = ttk.Label(self.booking_frame, text="Datum:")
         self.choose_date_label.grid(row=1, column=0)
-        self.active_booking_date_filled = tk.BooleanVar()
         self.active_booking_date = tk.StringVar(value="Välj från tillgängliga tider...")
         self.choose_date_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_date, state=tk.DISABLED)
         self.choose_date_entry.grid(row=1, column=1)
@@ -124,8 +120,9 @@ class App:
         # E-post
         self.choose_email_label = ttk.Label(self.booking_frame, text="E-post:")
         self.choose_email_label.grid(row=4, column=0)
-        self.choose_email_input = ttk.Entry(self.booking_frame)
-        self.choose_email_input.grid(row=4, column=1)
+        self.entry_email = ttk.Entry(self.booking_frame)
+        self.entry_email.grid(row=4, column=1)
+
 
         # Välj typ av tjänst
         self.service_label = ttk.Label(self.booking_frame, text="Typ av tjänst:")
@@ -137,6 +134,21 @@ class App:
 
         for index, service in enumerate(self.services):
             ttk.Radiobutton(self.booking_frame, text=service, value=index, variable=self.radio_choice).grid(row=5, column=index+1)
+
+
+        # Boka tid knapp
+        self.book_time_button = ttk.Button(self.booking_frame, text="Boka", command=self.onClickBookingBtn)
+        self.book_time_button.grid(row=6)
+
+
+    def onClickBookingBtn(self):
+        id = "2" # Hårdkodat för nuläget
+        full_name = self.full_name_entry.get()
+        email = self.entry_email.get()
+        service = self.services[self.radio_choice.get()]
+        customer = {"fullName": full_name, "email": email}
+
+        self.booking_repo.book_time(id, service, customer)
 
 
 if __name__ == "__main__":
