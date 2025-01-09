@@ -32,7 +32,7 @@ class App:
         self.customer_button = ttk.Button(self.chooseuserframe, text="Kund", command=self.customer_frame)
         self.customer_button.pack(side="left")
 
-        self.owner_button = ttk.Button(self.chooseuserframe, text="Ägare", command="")
+        self.owner_button = ttk.Button(self.chooseuserframe, text="Ägare", command=self.owner_frame)
         self.owner_button.pack(side="right")
 
     def customer_frame(self):
@@ -145,6 +145,70 @@ class App:
         self.book_time_button = ttk.Button(self.booking_frame, text="Boka", command=self.onClickBookingBtn)
         self.book_time_button.grid(row=6)
 
+    def owner_frame(self):
+        # Glömmer den tidigare frame
+        self.chooseuserframe.forget()
+
+        # Huvud frame
+        frame_main = ttk.Frame(self.root)
+        frame_main.pack()
+
+        # Bokade tider frame
+        frame_bookings = ttk.Frame(frame_main)
+        frame_bookings.pack()
+
+        # Produkthantering frame
+        frame_products = ttk.Frame(frame_main)
+        frame_products.pack()
+
+        # Bokade tider label
+        label_bookings = ttk.Label(frame_bookings, text="Bokade tider", font=("", 25))
+        label_bookings.pack()
+
+        # Bokade tider treeview
+        treeview_bookings = ttk.Treeview(frame_bookings)
+        treeview_bookings.pack()
+
+        # Treeview
+        bookings = self.booking_repo.get_customer_bookings()
+
+        columns = ("Datum", "Tid", "Kund", "E-post", "Tjänst")
+
+        treeview_bookings['columns'] = columns
+
+        # Döljer en första tom kolumn (#0)
+        treeview_bookings.column("#0", width=0, stretch=False)
+
+        for column in columns:
+            treeview_bookings.column(column, width=100, anchor="center")
+            treeview_bookings.heading(column, text=column)
+
+        if bookings:
+            for booking in bookings:
+                row = [
+                    booking["date"],
+                    booking["time"],
+                    booking["customer"]["fullName"],
+                    booking["customer"]["email"],
+                    booking["service"]
+                ]
+                treeview_bookings.insert("", "end", values=row, iid=booking["id"])
+
+        # Produkthantering label
+        label_products = ttk.Label(frame_products, text="Produkthantering", font=("", 25))
+        label_products.grid(row=0)
+
+        # Produkthantering buttons
+        button_add_product = ttk.Button(frame_products, text="Lägg till produkt")
+        button_update_product = ttk.Button(frame_products, text="Uppdatera produkt")
+        button_remove_product = ttk.Button(frame_products, text="Ta bort produkt")
+        buttons = [button_add_product, button_update_product, button_remove_product]
+        for button in buttons:
+            button.grid(row=1, column=buttons.index(button))
+
+        # Produkthantering treeview
+        treeview_products = ttk.Treeview(frame_products)
+        treeview_products.grid(row=2)
 
     def onClickBookingBtn(self):
         id = self.booking_id.get()
