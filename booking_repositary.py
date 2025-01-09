@@ -11,11 +11,24 @@ class BookingRepositary:
             bookings = json.load(file)
 
         # Filtrerar ut (tar bort) redan bokade tider från listan
+        available_bookings = []
+        for booking in bookings:
+            if not booking["customer"]:
+                available_bookings.append(booking)
+        
+        return available_bookings
+    
+    def get_customer_bookings(self) -> list:
+        with open(self.filename, "r") as file:
+            bookings = json.load(file)
+
+        # Filtrerar bokningar med kunder
+        customer_bookings = []
         for booking in bookings:
             if booking["customer"]:
-                bookings.remove(booking)
-        
-        return bookings
+                customer_bookings.append(booking)
+                
+        return customer_bookings
 
     # Boka en tid (kund)
     def book_time(self, id: str, service: str, customer: dict):
@@ -35,4 +48,3 @@ class BookingRepositary:
                     json.dump(bookings, file, ensure_ascii=False, indent=4)
                 
                 return booking
-        
