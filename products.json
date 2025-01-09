@@ -4,6 +4,6 @@
         "name": "MM Däck",
         "price": 1000,
         "inStock": 21,
-        "categori": "Däck" 
+        "category": "Däck"
     }
 ]

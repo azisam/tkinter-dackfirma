@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from booking_repositary import BookingRepositary
+from product_repositary import ProductRepositary
 
 
 class App:
@@ -13,8 +14,9 @@ class App:
         self.root.title("Däckfirma")
         self.root.geometry("900x400")
 
-        # Repo för bokning och...
+        # Objekt/instanser för bokning och produkter Repositary
         self.booking_repo = BookingRepositary("bookings.json")
+        self.product_repo = ProductRepositary("products.json")
 
         # Välj användare frame
         self.choose_user(self.root)
