@@ -4,6 +4,8 @@ from tkinter import ttk
 from booking_repositary import BookingRepositary
 from product_repositary import ProductRepositary
 
+from product import Product
+
 
 class App:
     def __init__(self, ):
@@ -209,21 +211,21 @@ class App:
             button.grid(row=1, column=buttons.index(button))
 
         # Produkthantering treeview
-        treeview_products = ttk.Treeview(frame_products)
-        treeview_products.grid(row=2)
+        self.treeview_products = ttk.Treeview(frame_products)
+        self.treeview_products.grid(row=2)
 
         products = self.product_repo.get_products()
 
         columns = ("Produkt ID", "Produkt namn", "Pris", "I lager", "Kategori")
 
-        treeview_products['columns'] = columns
+        self.treeview_products['columns'] = columns
 
         # Döljer en första tom kolumn (#0)
-        treeview_products.column("#0", width=0, stretch=False)
+        self.treeview_products.column("#0", width=0, stretch=False)
 
         for column in columns:
-            treeview_products.column(column, width=100, anchor="center")
-            treeview_products.heading(column, text=column)
+            self.treeview_products.column(column, width=100, anchor="center")
+            self.treeview_products.heading(column, text=column)
 
         if products:
             for product in products:
@@ -234,7 +236,7 @@ class App:
                     product["inStock"],
                     product["category"]
                 ]
-                treeview_products.insert("", "end", values=row, iid=product["id"])
+                self.treeview_products.insert("", "end", values=row, iid=product["id"])
 
     # Modal dialog för att lägga till en ny produkt (Ägare)
     def add_product(self):
@@ -246,8 +248,24 @@ class App:
             in_stock = int(entry_product_in_stock.get())
             category = entry_product_category.get()
 
-            self.product_repo.add_product(id, name, price, in_stock, category)
-            dismiss()
+            # Nytt produkt objekt
+            new_product = Product(id, name, price, in_stock, category)
+
+            # Lägger till den nya produkten i products JSON filen samt retunerar produkt dict:en om allt gått bra
+            product = self.product_repo.add_product(new_product)
+
+            # Om produkten lagts till korrekt i products JSON filen
+            if product:
+                row = [
+                    product["id"],
+                    product["name"],
+                    product["price"],
+                    product["inStock"],
+                    product["category"]
+                ]
+
+                self.treeview_products.insert("", "end", values=row, iid=product["id"])
+                dismiss()
 
         # Stänger dialog fönster
         def dismiss():
