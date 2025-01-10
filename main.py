@@ -212,6 +212,30 @@ class App:
         treeview_products = ttk.Treeview(frame_products)
         treeview_products.grid(row=2)
 
+        products = self.product_repo.get_products()
+
+        columns = ("Produkt ID", "Produkt namn", "Pris", "I lager", "Kategori")
+
+        treeview_products['columns'] = columns
+
+        # Döljer en första tom kolumn (#0)
+        treeview_products.column("#0", width=0, stretch=False)
+
+        for column in columns:
+            treeview_products.column(column, width=100, anchor="center")
+            treeview_products.heading(column, text=column)
+
+        if products:
+            for product in products:
+                row = [
+                    product["id"],
+                    product["name"],
+                    product["price"],
+                    product["inStock"],
+                    product["category"]
+                ]
+                treeview_products.insert("", "end", values=row, iid=product["id"])
+
     def onClickBookingBtn(self):
         id = self.booking_id.get()
         full_name = self.full_name_entry.get()
