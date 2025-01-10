@@ -13,12 +13,12 @@ class ProductRepositary:
         return products
     
     # Lägg till en ny produkt
-    def add_product(self, id: str, name: str, price: float, inStock: int, category: str) -> list:
+    def add_product(self, id: str, name: str, price: int, in_stock: int, category: str) -> list:
         with open(self.filename, "r") as file:
             products = json.load(file)
         
         # Nytt objekt/instans av Product
-        product = Product(id, name, price, inStock, category)
+        product = Product(id, name, price, in_stock, category)
 
         # Lägg till det nya produkten som en dictionary i produkter listan
         products.append(product.dictionary())
