@@ -201,7 +201,7 @@ class App:
         label_products.grid(row=0)
 
         # Produkthantering buttons
-        button_add_product = ttk.Button(frame_products, text="Lägg till produkt")
+        button_add_product = ttk.Button(frame_products, text="Lägg till produkt", command=self.add_product)
         button_update_product = ttk.Button(frame_products, text="Uppdatera produkt")
         button_remove_product = ttk.Button(frame_products, text="Ta bort produkt")
         buttons = [button_add_product, button_update_product, button_remove_product]
@@ -235,6 +235,57 @@ class App:
                     product["category"]
                 ]
                 treeview_products.insert("", "end", values=row, iid=product["id"])
+
+    # Modal dialog för att lägga till en ny produkt (Ägare)
+    def add_product(self):
+
+        def onClick():
+            id = entry_product_id.get()
+            name = entry_product_name.get()
+            price = int(entry_product_price.get())
+            in_stock = int(entry_product_in_stock.get())
+            category = entry_product_category.get()
+
+            self.product_repo.add_product(id, name, price, in_stock, category)
+            dismiss()
+
+        # Stänger dialog fönster
+        def dismiss():
+            dlg.grab_release()
+            dlg.destroy()
+
+        # Skapar dialog fönster
+        dlg = tk.Toplevel(self.root)
+
+        ttk.Label(dlg, text="Produkt ID:").pack()
+        entry_product_id = ttk.Entry(dlg)
+        entry_product_id.pack()
+
+        ttk.Label(dlg, text="Produkt namn:").pack()
+        entry_product_name = ttk.Entry(dlg)
+        entry_product_name.pack()
+
+        ttk.Label(dlg, text="Pris:").pack()
+        entry_product_price = ttk.Entry(dlg)
+        entry_product_price.pack()
+
+        ttk.Label(dlg, text="I lager:").pack()
+        entry_product_in_stock = ttk.Entry(dlg)
+        entry_product_in_stock.pack()
+
+        ttk.Label(dlg, text="Kategori:").pack()
+        entry_product_category = ttk.Entry(dlg)
+        entry_product_category.pack()
+
+        # Lägg till ny produkt knapp
+        ttk.Button(dlg, text="Lägg till produkt", command=onClick).pack()
+        
+        # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
+        dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
+        dlg.transient(self.root) # dialog window is related to main
+        dlg.wait_visibility() # can't grab until window appears, so we wait
+        dlg.grab_set() # ensure all input goes to our window
+        dlg.wait_window() # block until window is destroyed
 
     def onClickBookingBtn(self):
         id = self.booking_id.get()
