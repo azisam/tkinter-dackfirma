@@ -31,11 +31,12 @@ class ProductRepositary:
         for product in products:
             if id == product["id"]:
                 products.remove(product)
-                deleted_product = product
         
-        with open(self.filename, "w") as file:
-            json.dump(products, file, ensure_ascii=False, indent=4)
-            return deleted_product
+                with open(self.filename, "w") as file:
+                    json.dump(products, file, ensure_ascii=False, indent=4)
+                    return product
+        
+        return {}
 
     # Uppdatera en produkt
     def update_product(self, id: str, data: dict) -> dict:

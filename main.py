@@ -205,7 +205,7 @@ class App:
         # Produkthantering buttons
         button_add_product = ttk.Button(frame_products, text="Lägg till produkt", command=self.add_product)
         button_update_product = ttk.Button(frame_products, text="Uppdatera produkt")
-        button_remove_product = ttk.Button(frame_products, text="Ta bort produkt")
+        button_remove_product = ttk.Button(frame_products, text="Ta bort produkt", command=self.remove_product)
         buttons = [button_add_product, button_update_product, button_remove_product]
         for button in buttons:
             button.grid(row=1, column=buttons.index(button))
@@ -314,6 +314,12 @@ class App:
 
         self.booking_repo.book_time(id, service, customer)
 
+    def remove_product(self):
+        id = self.treeview_products.focus()
+        removed_product = self.product_repo.remove_product(id)
+
+        if removed_product:
+            self.treeview_products.delete(id)
 
 if __name__ == "__main__":
     app = App()
