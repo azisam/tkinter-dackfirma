@@ -36,3 +36,18 @@ class ProductRepositary:
         with open(self.filename, "w") as file:
             json.dump(products, file, ensure_ascii=False, indent=4)
             return deleted_product
+
+    # Uppdatera en produkt
+    def update_product(self, id: str, data: dict) -> dict:
+        with open(self.filename, "r") as file:
+            products = json.load(file)
+        
+        for product in products:
+            # Kontrollera om ID matchar
+            if id == product["id"]:
+                # Uppdaterar produkten med ny data
+                product.update(data)
+
+                with open(self.filename, "w") as file:
+                    json.dump(products, file, ensure_ascii=False, indent=4)
+                    return product
