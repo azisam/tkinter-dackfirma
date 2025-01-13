@@ -52,3 +52,5 @@ class ProductRepositary:
                 with open(self.filename, "w") as file:
                     json.dump(products, file, ensure_ascii=False, indent=4)
                     return product
+    
+        return {}

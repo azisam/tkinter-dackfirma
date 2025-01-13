@@ -204,7 +204,7 @@ class App:
 
         # Produkthantering buttons
         button_add_product = ttk.Button(frame_products, text="Lägg till produkt", command=self.add_product)
-        button_update_product = ttk.Button(frame_products, text="Uppdatera produkt")
+        button_update_product = ttk.Button(frame_products, text="Uppdatera produkt", command=self.update_product)
         button_remove_product = ttk.Button(frame_products, text="Ta bort produkt", command=self.remove_product)
         buttons = [button_add_product, button_update_product, button_remove_product]
         for button in buttons:
@@ -320,6 +320,83 @@ class App:
 
         if removed_product:
             self.treeview_products.delete(id)
+
+    def update_product(self):
+        # Om en rad inte är vald i treeview:en - hoppa ur metoden
+        if not self.treeview_products.focus():
+            return
+
+        selected = self.treeview_products.selection()
+        selected_index = self.treeview_products.index(selected)
+        # Delar upp tupel:en till variabler
+        id, name, price, in_stock, category = (self.treeview_products.item(selected, "values"))
+
+        def onClick():
+            product = {
+                "id": entry_id.get(),
+                "name": entry_name.get(),
+                "price": entry_price.get(),
+                "inStock": entry_in_stock.get(),
+                "category": entry_category.get()
+            }
+
+            updated_product = self.product_repo.update_product(id, product)
+
+            if updated_product:
+                row = (
+                    updated_product["id"],
+                    updated_product["name"],
+                    updated_product["price"],
+                    updated_product["inStock"],
+                    updated_product["category"]
+                )
+                self.treeview_products.delete(id)
+                self.treeview_products.insert("", index=selected_index, iid=updated_product["id"], values=row)
+                dismiss()
+
+        # Stänger dialog fönster
+        def dismiss():
+            dlg.grab_release()
+            dlg.destroy()
+
+        # Skapar dialog fönster
+        dlg = tk.Toplevel(self.root)
+
+        ttk.Label(dlg, text="Produkt ID:").pack()
+        entry_id = tk.StringVar(value=id)
+        entry_product_id = ttk.Entry(dlg, textvariable=entry_id)
+        entry_product_id.pack()
+
+        ttk.Label(dlg, text="Produkt namn:").pack()
+        entry_name = tk.StringVar(value=name)
+        entry_product_name = ttk.Entry(dlg, textvariable=entry_name)
+        entry_product_name.pack()
+
+        ttk.Label(dlg, text="Pris:").pack()
+        entry_price = tk.IntVar(value=price)
+        entry_product_price = ttk.Entry(dlg, textvariable=entry_price)
+        entry_product_price.pack()
+
+        ttk.Label(dlg, text="I lager:").pack()
+        entry_in_stock = tk.IntVar(value=in_stock)
+        entry_product_in_stock = ttk.Entry(dlg, textvariable=entry_in_stock)
+        entry_product_in_stock.pack()
+
+        ttk.Label(dlg, text="Kategori:").pack()
+        entry_category = tk.StringVar(value=category)
+        entry_product_category = ttk.Entry(dlg, textvariable=entry_category)
+        entry_product_category.pack()
+
+        # Uppdatera produkt knapp
+        ttk.Button(dlg, text="Uppdatera produkt", command=onClick).pack()
+        
+        # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
+        dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
+        dlg.transient(self.root) # dialog window is related to main
+        dlg.wait_visibility() # can't grab until window appears, so we wait
+        dlg.grab_set() # ensure all input goes to our window
+        dlg.wait_window() # block until window is destroyed
+
 
 if __name__ == "__main__":
     app = App()
