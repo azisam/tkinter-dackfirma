@@ -48,3 +48,22 @@ class BookingRepositary:
                     json.dump(bookings, file, ensure_ascii=False, indent=4)
                 
                 return booking
+
+    # Skapa en ny bokningstid (Ägare)
+    def add_booking(self, booking) -> dict:
+        with open(self.filename, "r") as file:
+            bookings = json.load(file)
+
+            # Skapa unikt boknings ID
+            booking_id = int(bookings[len(bookings) - 1]["id"]) + 1
+            booking_id = str(booking_id)
+            booking.set_id(booking_id)
+
+            bookings.append(booking.dictionary())
+
+        # Lägg till den nya tillgängliga bokningen i slutet av bookings JSON filen
+        with open(self.filename, "w") as file:
+            json.dump(bookings, file, ensure_ascii=False, indent=4)
+            return booking
+
+        return {}
