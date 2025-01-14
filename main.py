@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from booking_repositary import BookingRepositary
 from product_repositary import ProductRepositary
@@ -321,6 +322,11 @@ class App:
 
     def remove_product(self):
         id = self.treeview_products.focus()
+
+        # Om en produkt inte är vald från trädvyn
+        if not id:
+            messagebox.showerror(title="Välj en produkt", message="Du behöver välja en produkt från trädvyn!", icon=messagebox.ERROR)
+
         removed_product = self.product_repo.remove_product(id)
 
         if removed_product:
@@ -329,6 +335,7 @@ class App:
     def update_product(self):
         # Om en rad inte är vald i treeview:en - hoppa ur metoden
         if not self.treeview_products.focus():
+            messagebox.showerror(title="Välj en produkt", message="Du behöver välja en produkt från trädvyn!", icon=messagebox.ERROR)
             return
 
         selected = self.treeview_products.selection()
