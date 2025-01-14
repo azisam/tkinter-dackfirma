@@ -5,6 +5,7 @@ from booking_repositary import BookingRepositary
 from product_repositary import ProductRepositary
 
 from product import Product
+from booking import Booking
 
 
 class App:
@@ -168,6 +169,10 @@ class App:
         # Bokade tider label
         label_bookings = ttk.Label(frame_bookings, text="Bokade tider", font=("", 25))
         label_bookings.pack()
+
+        # Skapa ny tid knapp
+        button_new_time = ttk.Button(frame_bookings, text="Skapa ny tid", command=self.add_booking)
+        button_new_time.pack()
 
         # Bokade tider treeview
         treeview_bookings = ttk.Treeview(frame_bookings)
@@ -397,6 +402,49 @@ class App:
         dlg.grab_set() # ensure all input goes to our window
         dlg.wait_window() # block until window is destroyed
 
+    def add_booking(self):
+        
+        def onSubmit():
+            date = entry_date.get()
+            time = entry_time.get()
+
+            # Nytt boknings objekt
+            new_booking = Booking(date, time)
+
+            # Lägger till den nya bokningen i bookings JSON filen samt retunerar booking dict:en om allt gått bra
+            booking = self.booking_repo.add_booking(new_booking)
+
+            # Om bokningen lagts till korrekt i bookings JSON filen
+            if booking:
+                dismiss()
+
+        # Stänger dialog fönster
+        def dismiss():
+            dlg.grab_release()
+            dlg.destroy()
+
+        # Skapar dialog fönster
+        dlg = tk.Toplevel(self.root)
+
+        # Datum label + entry
+        ttk.Label(dlg, text="Datum:").pack()
+        entry_date = ttk.Entry(dlg)
+        entry_date.pack()
+
+        # Tid label + entry
+        ttk.Label(dlg, text="Tid:").pack()
+        entry_time = ttk.Entry(dlg)
+        entry_time.pack()
+
+        # Lägg till ny produkt knapp
+        ttk.Button(dlg, text="Skapa ny tid", command=onSubmit).pack()
+        
+        # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
+        dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
+        dlg.transient(self.root) # dialog window is related to main
+        dlg.wait_visibility() # can't grab until window appears, so we wait
+        dlg.grab_set() # ensure all input goes to our window
+        dlg.wait_window() # block until window is destroyed
 
 if __name__ == "__main__":
     app = App()
