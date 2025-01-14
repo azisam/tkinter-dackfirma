@@ -110,46 +110,45 @@ class App:
 
         # Välj datum
         self.choose_date_label = ttk.Label(self.booking_frame, text="Datum:")
-        self.choose_date_label.grid(row=1, column=0)
+        self.choose_date_label.grid(row=1, column=0, sticky="w")
         self.active_booking_date = tk.StringVar(value="Välj från tillgängliga tider...")
         self.choose_date_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_date, state=tk.DISABLED)
         self.choose_date_entry.grid(row=1, column=1)
 
         # Välj tid
         self.choose_time_label = ttk.Label(self.booking_frame, text="Tid:")
-        self.choose_time_label.grid(row=2, column=0)
+        self.choose_time_label.grid(row=2, column=0, sticky="w")
         self.active_booking_time = tk.StringVar(value="Välj från tillgängliga tider...")
         self.choose_time_entry = ttk.Entry(self.booking_frame, textvariable=self.active_booking_time, state=tk.DISABLED)
         self.choose_time_entry.grid(row=2, column=1)
 
         # För och efternamn
         self.full_name_label = ttk.Label(self.booking_frame, text="För och efternamn:")
-        self.full_name_label.grid(row=3, column=0)
+        self.full_name_label.grid(row=3, column=0, sticky="w")
         self.full_name_entry = ttk.Entry(self.booking_frame)
         self.full_name_entry.grid(row=3, column=1)
 
         # E-post
         self.choose_email_label = ttk.Label(self.booking_frame, text="E-post:")
-        self.choose_email_label.grid(row=4, column=0)
+        self.choose_email_label.grid(row=4, column=0, sticky="w")
         self.entry_email = ttk.Entry(self.booking_frame)
         self.entry_email.grid(row=4, column=1)
 
 
         # Välj typ av tjänst
         self.service_label = ttk.Label(self.booking_frame, text="Typ av tjänst:")
-        self.service_label.grid(row=5, column=0)
+        self.service_label.grid(row=5, column=0, sticky="w")
 
         self.radio_choice = tk.IntVar()
         self.radio_choice.set(0)
         self.services = ("Däckbyte", "Balansering", "Däckreperation")
 
         for index, service in enumerate(self.services):
-            ttk.Radiobutton(self.booking_frame, text=service, value=index, variable=self.radio_choice).grid(row=5, column=index+1)
-
+            ttk.Radiobutton(self.booking_frame, text=service, value=index, variable=self.radio_choice).grid(row=5+index, column=1, padx=(0, 10), pady=5, sticky="w")
 
         # Boka tid knapp
         self.book_time_button = ttk.Button(self.booking_frame, text="Boka", command=self.onClickBookingBtn)
-        self.book_time_button.grid(row=6)
+        self.book_time_button.grid(row=8, sticky="w")
 
     def owner_frame(self):
         # Glömmer den tidigare frame
