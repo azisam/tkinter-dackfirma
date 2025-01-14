@@ -6,33 +6,33 @@ class ProductRepositary:
 
     # Hämta alla produkter
     def get_products(self) -> list:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             products = json.load(file)
         
         return products
     
     # Lägg till en ny produkt
     def add_product(self, product) -> dict:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             products = json.load(file)
 
         # Lägg till det nya produkten som en dictionary i produkter listan
         products.append(product.dictionary())
 
-        with open(self.filename, "w") as file:
+        with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(products, file, ensure_ascii=False, indent=4)
             return product.dictionary()
 
     # Ta bort en produkt
     def remove_product(self, id: str) -> dict:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             products = json.load(file)
         
         for product in products:
             if id == product["id"]:
                 products.remove(product)
         
-                with open(self.filename, "w") as file:
+                with open(self.filename, "w", encoding="utf-8") as file:
                     json.dump(products, file, ensure_ascii=False, indent=4)
                     return product
         
@@ -40,7 +40,7 @@ class ProductRepositary:
 
     # Uppdatera en produkt
     def update_product(self, id: str, data: dict) -> dict:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             products = json.load(file)
         
         for product in products:
@@ -49,7 +49,7 @@ class ProductRepositary:
                 # Uppdaterar produkten med ny data
                 product.update(data)
 
-                with open(self.filename, "w") as file:
+                with open(self.filename, "w", encoding="utf-8") as file:
                     json.dump(products, file, ensure_ascii=False, indent=4)
                     return product
     

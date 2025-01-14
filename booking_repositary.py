@@ -7,7 +7,7 @@ class BookingRepositary:
         # kanske checka ifall json filen existerar och om inte skapa den
     
     def get_available_bookings(self) -> list:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             bookings = json.load(file)
 
         # Filtrerar ut (tar bort) redan bokade tider från listan
@@ -19,7 +19,7 @@ class BookingRepositary:
         return available_bookings
     
     def get_customer_bookings(self) -> list:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             bookings = json.load(file)
 
         # Filtrerar bokningar med kunder
@@ -33,7 +33,7 @@ class BookingRepositary:
     # Boka en tid (kund)
     def book_time(self, id: str, service: str, customer: dict):
         # Öppna JSON filen i läsläge
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             bookings = json.load(file)
 
         # Loop:a igenom och leta efter matchande ID
@@ -43,7 +43,7 @@ class BookingRepositary:
                 booking["customer"] = customer
 
                 # Öppna JSON filen i skrivläge
-                with open(self.filename, "w") as file:
+                with open(self.filename, "w", encoding="utf-8") as file:
                     # Sparar till JSON filen med lättläst formattering
                     json.dump(bookings, file, ensure_ascii=False, indent=4)
                 
@@ -51,7 +51,7 @@ class BookingRepositary:
 
     # Skapa en ny bokningstid (Ägare)
     def add_booking(self, booking) -> dict:
-        with open(self.filename, "r") as file:
+        with open(self.filename, "r", encoding="utf-8") as file:
             bookings = json.load(file)
 
             # Skapa unikt boknings ID
@@ -62,7 +62,7 @@ class BookingRepositary:
             bookings.append(booking.dictionary())
 
         # Lägg till den nya tillgängliga bokningen i slutet av bookings JSON filen
-        with open(self.filename, "w") as file:
+        with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(bookings, file, ensure_ascii=False, indent=4)
             return booking
 
