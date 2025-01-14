@@ -46,15 +46,19 @@ class App:
         self.chooseuserframe.forget()
 
         # Huvud frame
-        self.main_frame = ttk.Frame(self.root)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        self.frame_main_customer = ttk.Frame(self.root)
+        self.frame_main_customer.pack(fill=tk.BOTH, expand=True)
+
+        # Knapp för att växla till ägar vy
+        button_switch_to_owner_view = ttk.Button(self.frame_main_customer, text="Växla till ägar vy", command=self.switch_to_owner_view)
+        button_switch_to_owner_view.pack()
 
         # Boka tid frame
-        self.booking_frame = ttk.Frame(self.main_frame)
+        self.booking_frame = ttk.Frame(self.frame_main_customer)
         self.booking_frame.pack(side=tk.LEFT)
 
         # Tillgängliga tider frame
-        self.available_bookings_frame = ttk.Frame(self.main_frame)
+        self.available_bookings_frame = ttk.Frame(self.frame_main_customer)
         self.available_bookings_frame.pack(side=tk.RIGHT, fill=None, padx=20)
 
         # Tillgängliga tider titel
@@ -155,15 +159,19 @@ class App:
         self.chooseuserframe.forget()
 
         # Huvud frame
-        frame_main = ttk.Frame(self.root)
-        frame_main.pack()
+        self.frame_main_owner = ttk.Frame(self.root)
+        self.frame_main_owner.pack()
+
+        # Knapp för att växla till kund vy
+        button_switch_to_customer_view = ttk.Button(self.frame_main_owner, text="Växla till kund vy", command=self.switch_to_customer_view)
+        button_switch_to_customer_view.pack()
 
         # Bokade tider frame
-        frame_bookings = ttk.Frame(frame_main)
+        frame_bookings = ttk.Frame(self.frame_main_owner)
         frame_bookings.pack()
 
         # Produkthantering frame
-        frame_products = ttk.Frame(frame_main)
+        frame_products = ttk.Frame(self.frame_main_owner)
         frame_products.pack()
 
         # Bokade tider label
@@ -451,6 +459,14 @@ class App:
         dlg.wait_visibility() # can't grab until window appears, so we wait
         dlg.grab_set() # ensure all input goes to our window
         dlg.wait_window() # block until window is destroyed
+
+    def switch_to_customer_view(self):
+        self.frame_main_owner.forget()
+        self.customer_frame()
+
+    def switch_to_owner_view(self):
+        self.frame_main_customer.forget()
+        self.owner_frame()
 
 if __name__ == "__main__":
     app = App()
