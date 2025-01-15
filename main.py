@@ -14,9 +14,9 @@ class App:
         # Skapa huvud fönstret
         self.root = tk.Tk()
 
-        # Titel, storlek
+        # Titel på applikationsfönstret
         self.root.title("Däckfirma")
-        self.root.geometry("900x400")
+        #self.root.geometry("900x400")
 
         # Objekt/instanser för bokning och produkter Repositary
         self.booking_repo = BookingRepositary("bookings.json")
@@ -29,25 +29,34 @@ class App:
         tk.mainloop()
     
     def choose_user(self, root):
-        self.chooseuserframe = ttk.Frame(root)
-        self.chooseuserframe.pack(pady=150)
+        # Ändrar på geometry
+        self.root.geometry("350x200")
 
-        self.choose_user = ttk.Label(self.chooseuserframe,text="Vem är du?", font=("", 30))
+        self.chooseuserframe = ttk.Frame(root)
+        self.chooseuserframe.pack(expand=True)
+
+        self.choose_user = ttk.Label(self.chooseuserframe,text="Välj användartyp", font=("", 30))
         self.choose_user.pack()
 
-        self.customer_button = ttk.Button(self.chooseuserframe, text="Kund", command=self.customer_frame)
-        self.customer_button.pack(side="left")
+        frame_chooseuser_buttons = tk.Frame(self.chooseuserframe)
+        frame_chooseuser_buttons.pack(ipadx=10, pady=10)
 
-        self.owner_button = ttk.Button(self.chooseuserframe, text="Ägare", command=self.owner_frame)
-        self.owner_button.pack(side="right")
+        self.customer_button = ttk.Button(frame_chooseuser_buttons, text="Kund", command=self.customer_frame)
+        self.customer_button.pack(side=tk.LEFT)
+
+        self.owner_button = ttk.Button(frame_chooseuser_buttons, text="Ägare", command=self.owner_frame)
+        self.owner_button.pack(side=tk.RIGHT)
 
     def customer_frame(self):
         # Glömmer den tidigare frame
         self.chooseuserframe.forget()
+        
+        # Ändrar på geometry
+        self.root.geometry("700x400")
 
         # Huvud frame
         self.frame_main_customer = ttk.Frame(self.root)
-        self.frame_main_customer.pack(fill=tk.BOTH, expand=True)
+        self.frame_main_customer.pack(expand=True, fill=tk.Y, side=tk.TOP, ipadx=25)
 
         # Knapp för att växla till ägar vy
         button_switch_to_owner_view = ttk.Button(self.frame_main_customer, text="Växla till ägar vy", command=self.switch_to_owner_view)
@@ -59,7 +68,7 @@ class App:
 
         # Tillgängliga tider frame
         self.available_bookings_frame = ttk.Frame(self.frame_main_customer)
-        self.available_bookings_frame.pack(side=tk.RIGHT, fill=None, padx=20)
+        self.available_bookings_frame.pack(side=tk.RIGHT)
 
         # Tillgängliga tider titel
         self.available_bookings_title = ttk.Label(self.available_bookings_frame, text="Tillgängliga tider", font=("", 25))
@@ -110,7 +119,7 @@ class App:
 
         # Boka tid titel
         self.booking_title = ttk.Label(self.booking_frame, text="Boka tid", font=("", 25))
-        self.booking_title.grid()
+        self.booking_title.grid(columnspan=2, pady=(0, 10))
 
         # Välj datum
         self.choose_date_label = ttk.Label(self.booking_frame, text="Datum:")
@@ -144,7 +153,7 @@ class App:
         self.service_label.grid(row=5, column=0, sticky="w")
 
         self.radio_choice = tk.IntVar()
-        self.radio_choice.set(0)
+        self.radio_choice.set(None)
         self.services = ("Däckbyte", "Balansering", "Däckreperation")
 
         for index, service in enumerate(self.services):
@@ -152,11 +161,15 @@ class App:
 
         # Boka tid knapp
         self.book_time_button = ttk.Button(self.booking_frame, text="Boka", command=self.onClickBookingBtn)
-        self.book_time_button.grid(row=8, sticky="w")
+        self.book_time_button.config(default="active")
+        self.book_time_button.grid(row=8, columnspan=2, pady=(10, 0))
 
     def owner_frame(self):
         # Glömmer den tidigare frame
         self.chooseuserframe.forget()
+
+        # Ändrar på geometry
+        self.root.geometry("600x670")
 
         # Huvud frame
         self.frame_main_owner = ttk.Frame(self.root)
@@ -168,11 +181,11 @@ class App:
 
         # Bokade tider frame
         frame_bookings = ttk.Frame(self.frame_main_owner)
-        frame_bookings.pack()
+        frame_bookings.pack(pady=(20, 0))
 
         # Produkthantering frame
         frame_products = ttk.Frame(self.frame_main_owner)
-        frame_products.pack()
+        frame_products.pack(pady=(20, 0))
 
         # Bokade tider label
         label_bookings = ttk.Label(frame_bookings, text="Bokade tider", font=("", 25))
@@ -180,7 +193,7 @@ class App:
 
         # Skapa ny tid knapp
         button_new_time = ttk.Button(frame_bookings, text="Skapa ny tid", command=self.add_booking)
-        button_new_time.pack()
+        button_new_time.pack(pady=(0, 5))
 
         # Bokade tider treeview
         treeview_bookings = ttk.Treeview(frame_bookings)
@@ -215,13 +228,17 @@ class App:
         label_products = ttk.Label(frame_products, text="Produkthantering", font=("", 25))
         label_products.grid(row=0)
 
+        # Frame för CRUD knappar
+        frame_crud_buttons = tk.Frame(frame_products)
+        frame_crud_buttons.grid(row=1, pady=(0, 5))
+
         # Produkthantering buttons
-        button_add_product = ttk.Button(frame_products, text="Lägg till produkt", command=self.add_product)
-        button_update_product = ttk.Button(frame_products, text="Uppdatera produkt", command=self.update_product)
-        button_remove_product = ttk.Button(frame_products, text="Ta bort produkt", command=self.remove_product)
+        button_add_product = ttk.Button(frame_crud_buttons, text="Lägg till produkt", command=self.add_product)
+        button_update_product = ttk.Button(frame_crud_buttons, text="Uppdatera produkt", command=self.update_product)
+        button_remove_product = ttk.Button(frame_crud_buttons, text="Ta bort produkt", command=self.remove_product)
         buttons = [button_add_product, button_update_product, button_remove_product]
         for button in buttons:
-            button.grid(row=1, column=buttons.index(button))
+            button.grid(row=0, column=buttons.index(button), padx=10)
 
         # Produkthantering treeview
         self.treeview_products = ttk.Treeview(frame_products)
@@ -286,30 +303,35 @@ class App:
             dlg.destroy()
 
         # Skapar dialog fönster
-        dlg = tk.Toplevel(self.root)
+        dlg = tk.Toplevel(self.root, padx=15, pady=10)
+
+        # Placerar översta dialogrutan ovanför root fönstret (https://stackoverflow.com/questions/36050192/how-to-position-toplevel-widget-relative-to-root-window)
+        x= self.root.winfo_x()
+        y = self.root.winfo_y()
+        dlg.geometry("+%d+%d" % (x + 100, y + 200))
 
         ttk.Label(dlg, text="Produkt ID:").pack()
         entry_product_id = ttk.Entry(dlg)
-        entry_product_id.pack()
+        entry_product_id.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Produkt namn:").pack()
         entry_product_name = ttk.Entry(dlg)
-        entry_product_name.pack()
+        entry_product_name.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Pris:").pack()
         entry_product_price = ttk.Entry(dlg)
-        entry_product_price.pack()
+        entry_product_price.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="I lager:").pack()
         entry_product_in_stock = ttk.Entry(dlg)
-        entry_product_in_stock.pack()
+        entry_product_in_stock.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Kategori:").pack()
         entry_product_category = ttk.Entry(dlg)
         entry_product_category.pack()
 
         # Lägg till ny produkt knapp
-        ttk.Button(dlg, text="Lägg till produkt", command=onClick).pack()
+        ttk.Button(dlg, text="Lägg till produkt", command=onClick).pack(pady=(20, 0))
         
         # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
         dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
@@ -379,27 +401,32 @@ class App:
             dlg.destroy()
 
         # Skapar dialog fönster
-        dlg = tk.Toplevel(self.root)
+        dlg = tk.Toplevel(self.root, padx=15, pady=10)
+
+        # Placerar översta dialogrutan ovanför root fönstret
+        x= self.root.winfo_x()
+        y = self.root.winfo_y()
+        dlg.geometry("+%d+%d" % (x + 100, y + 200))
 
         ttk.Label(dlg, text="Produkt ID:").pack()
         entry_id = tk.StringVar(value=id)
         entry_product_id = ttk.Entry(dlg, textvariable=entry_id)
-        entry_product_id.pack()
+        entry_product_id.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Produkt namn:").pack()
         entry_name = tk.StringVar(value=name)
         entry_product_name = ttk.Entry(dlg, textvariable=entry_name)
-        entry_product_name.pack()
+        entry_product_name.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Pris:").pack()
         entry_price = tk.IntVar(value=price)
         entry_product_price = ttk.Entry(dlg, textvariable=entry_price)
-        entry_product_price.pack()
+        entry_product_price.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="I lager:").pack()
         entry_in_stock = tk.IntVar(value=in_stock)
         entry_product_in_stock = ttk.Entry(dlg, textvariable=entry_in_stock)
-        entry_product_in_stock.pack()
+        entry_product_in_stock.pack(pady=(0, 10))
 
         ttk.Label(dlg, text="Kategori:").pack()
         entry_category = tk.StringVar(value=category)
@@ -407,7 +434,7 @@ class App:
         entry_product_category.pack()
 
         # Uppdatera produkt knapp
-        ttk.Button(dlg, text="Uppdatera produkt", command=onClick).pack()
+        ttk.Button(dlg, text="Uppdatera produkt", command=onClick).pack(pady=(20, 0))
         
         # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
         dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
@@ -438,20 +465,25 @@ class App:
             dlg.destroy()
 
         # Skapar dialog fönster
-        dlg = tk.Toplevel(self.root)
+        dlg = tk.Toplevel(self.root, padx=15, pady=10)
+
+        # Placerar översta dialogrutan ovanför root fönstret
+        x= self.root.winfo_x()
+        y = self.root.winfo_y()
+        dlg.geometry("+%d+%d" % (x + 100, y + 200))
 
         # Datum label + entry
         ttk.Label(dlg, text="Datum:").pack()
         entry_date = ttk.Entry(dlg)
-        entry_date.pack()
+        entry_date.pack(pady=(0, 10))
 
         # Tid label + entry
         ttk.Label(dlg, text="Tid:").pack()
         entry_time = ttk.Entry(dlg)
-        entry_time.pack()
+        entry_time.pack(pady=(0, 10))
 
         # Lägg till ny produkt knapp
-        ttk.Button(dlg, text="Skapa ny tid", command=onSubmit).pack()
+        ttk.Button(dlg, text="Skapa ny tid", command=onSubmit).pack(pady=(20, 0))
         
         # Mer för att skapa dialog fönstret (https://tkdocs.com/tutorial/windows.html#dialogs)
         dlg.protocol("WM_DELETE_WINDOW", dismiss) # intercept close button
