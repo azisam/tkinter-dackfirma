@@ -83,16 +83,18 @@ class App:
 
         # Körs när en treeview selektion görs/ändras
         def onChange(event):
-            table = event.widget
+            treeview = event.widget
+            selected = treeview.selection()
 
-            id = table.focus() # Boknings ID för fokuserad treeview rad
-            selected = table.selection()
-            date, time, _ = table.item(selected, "values") # Delar upp tupel:en till variabler
+            if selected:
+                date, time, _ = treeview.item(selected, "values") # Delar upp den valda treeview raden (tupel med värden) till variabler
 
-            # Sätter in dem nya värderna
-            self.booking_id.set(id)
-            self.active_booking_date.set(date)
-            self.active_booking_time.set(time)
+                id = treeview.focus() # Boknings ID för fokuserad treeview rad
+
+                # Sätter in dem nya värderna
+                self.booking_id.set(id)
+                self.active_booking_date.set(date)
+                self.active_booking_time.set(time)
 
         bookings = self.booking_repo.get_available_bookings()
 
@@ -347,7 +349,18 @@ class App:
         service = self.services[self.radio_choice.get()]
         customer = { "fullName": full_name, "email": email }
 
-        self.booking_repo.book_time(id, service, customer)
+        booking = self.booking_repo.book_time(id, service, customer)
+
+        if booking:
+            # Ta bort / rensa värden från alla input fält
+            self.active_booking_date.set("Välj från tillgängliga tider...")
+            self.active_booking_time.set("Välj från tillgängliga tider...")
+            self.full_name_entry.delete(0, tk.END)
+            self.entry_email.delete(0, tk.END)
+            self.radio_choice.set(None)
+
+            # Tar bort bokningen från tillgängliga bokningar treeview:en
+            self.available_bookings_table.delete(id)
 
     def remove_product(self):
         id = self.treeview_products.focus()
