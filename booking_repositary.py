@@ -4,66 +4,66 @@ from booking import Booking
 class BookingRepositary:
     def __init__(self, filename):
         self.filename = filename
-        # kanske checka ifall json filen existerar och om inte skapa den
-    
+
+    # Hämta alla tillgängliga bokningstider (ej bokade)
     def get_available_bookings(self) -> list:
         with open(self.filename, "r", encoding="utf-8") as file:
-            bookings = json.load(file)
+            bookings = json.load(file) # Läser in bokningsdata från filen
 
-        # Filtrerar ut (tar bort) redan bokade tider från listan
+        # Filtrerar ut bokningar som inte har någon kund kopplad (tillgängliga tider)
         available_bookings = []
         for booking in bookings:
-            if not booking["customer"]:
+            if not booking["customer"]: # Kontrollera om kunden är tom
                 available_bookings.append(booking)
         
-        return available_bookings
-    
+        return available_bookings # Returnerar listan med tillgängliga bokningstider
+
+    # Hämta alla kundbokningar
     def get_customer_bookings(self) -> list:
         with open(self.filename, "r", encoding="utf-8") as file:
-            bookings = json.load(file)
+            bookings = json.load(file) # Läser in bokningsdata från filen
 
-        # Filtrerar bokningar med kunder
+        # Filtrerar ut bokningar som har en kund kopplad
         customer_bookings = []
         for booking in bookings:
-            if booking["customer"]:
+            if booking["customer"]: # Kontrollera om kunden finns
                 customer_bookings.append(booking)
                 
-        return customer_bookings
+        return customer_bookings # Returnerar listan med kundbokningar
 
-    # Boka en tid (kund)
+    # Boka en tid (Kund)
     def book_time(self, id: str, service: str, customer: dict):
         # Öppna JSON filen i läsläge
         with open(self.filename, "r", encoding="utf-8") as file:
-            bookings = json.load(file)
+            bookings = json.load(file) # Läser in bokningsdata från filen
 
-        # Loop:a igenom och leta efter matchande ID
+        # Letar efter bokning med matchande ID
         for booking in bookings:
-            if booking["id"] == id:
-                booking["service"] = service
-                booking["customer"] = customer
+            if booking["id"] == id: # Kontrollera om ID matchar
+                booking["service"] = service # Uppdatera tjänsten för bokningen
+                booking["customer"] = customer # Koppla kunden till bokningen
 
-                # Öppna JSON filen i skrivläge
+                # Öppna JSON-filen i skrivläge för att spara ändringarna
                 with open(self.filename, "w", encoding="utf-8") as file:
-                    # Sparar till JSON filen med lättläst formattering
-                    json.dump(bookings, file, ensure_ascii=False, indent=4)
+                    json.dump(bookings, file, ensure_ascii=False, indent=4) # Spara filen med formattering
                 
-                return booking
+                return booking # Returnera den uppdaterade bokningen
 
-    # Skapa en ny bokningstid (Ägare)
+    # Lägg till en ny bokningstid (Ägare)
     def add_booking(self, booking) -> dict:
         with open(self.filename, "r", encoding="utf-8") as file:
-            bookings = json.load(file)
+            bookings = json.load(file) # Läser in bokningsdata från filen
 
-            # Skapa unikt boknings ID
-            booking_id = int(bookings[len(bookings) - 1]["id"]) + 1
+            # Generera ett unikt boknings ID
+            booking_id = int(bookings[len(bookings) - 1]["id"]) + 1 # Hämta senaste ID och öka med 1
             booking_id = str(booking_id)
-            booking.set_id(booking_id)
+            booking.set_id(booking_id) # Tilldela det nya ID:t till bokningen
 
-            bookings.append(booking.dictionary())
+            bookings.append(booking.dictionary()) # Lägg till den nya bokningen i listan
 
-        # Lägg till den nya tillgängliga bokningen i slutet av bookings JSON filen
+        # Spara den uppdaterade listan med bokningar till JSON-filen
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(bookings, file, ensure_ascii=False, indent=4)
-            return booking
+            return booking # Returnera den tillagda bokningen
 
-        return {}
+        return {} # Returnera en tom dictionary om något gick fel

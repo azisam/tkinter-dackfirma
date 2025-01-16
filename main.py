@@ -10,106 +10,117 @@ from booking import Booking
 
 
 class App:
+    # Initierar applikationen. Skapar huvudfönstret och ansluter till datakällor för bokningar och produkter
     def __init__(self, ):
-        # Skapa huvud fönstret
+        # Skapa huvudfönstret för GUI
         self.root = tk.Tk()
 
         # Titel på applikationsfönstret
         self.root.title("Däckfirma")
-        #self.root.geometry("900x400")
 
         # Objekt/instanser för bokning och produkter Repositary
         self.booking_repo = BookingRepositary("bookings.json")
         self.product_repo = ProductRepositary("products.json")
 
-        # Välj användare frame
+        # Visa startsida där användaren väljer användartyp
         self.choose_user(self.root)
 
-        # Börja loopet
+        # Starta GUI-loop
         tk.mainloop()
     
+    # Skapar och visar en startsida där användaren kan välja mellan kund- eller ägarvy
     def choose_user(self, root):
-        # Ändrar på geometry
+        # Sätt fönsterstorlek
         self.root.geometry("350x200")
 
+        # Skapa huvudram för användarval
         self.chooseuserframe = ttk.Frame(root)
         self.chooseuserframe.pack(expand=True)
 
+        # Rubrik för användarval
         self.choose_user = ttk.Label(self.chooseuserframe,text="Välj användartyp", font=("", 30))
         self.choose_user.pack()
 
+        # Frame för knappar
         frame_chooseuser_buttons = tk.Frame(self.chooseuserframe)
         frame_chooseuser_buttons.pack(ipadx=10, pady=10)
 
+        # Knapp för att välja kundvy
         self.customer_button = ttk.Button(frame_chooseuser_buttons, text="Kund", command=self.customer_frame)
         self.customer_button.pack(side=tk.LEFT)
 
+        # Knapp för att välja ägarvy
         self.owner_button = ttk.Button(frame_chooseuser_buttons, text="Ägare", command=self.owner_frame)
         self.owner_button.pack(side=tk.RIGHT)
 
+    # Skapar och visar gränssnittet för kundvyn, där kunder kan boka tider och se tillgängliga tider
     def customer_frame(self):
-        # Glömmer den tidigare frame
+        # Rensa föregående vy
         self.chooseuserframe.forget()
         
-        # Ändrar på geometry
+        # Ändra storlek på fönstret
         self.root.geometry("700x400")
 
-        # Huvud frame
+        # Skapa huvud frame för kundvyn
         self.frame_main_customer = ttk.Frame(self.root)
         self.frame_main_customer.pack(expand=True, fill=tk.Y, side=tk.TOP, ipadx=25)
 
-        # Knapp för att växla till ägar vy
+        # Knapp för att växla till ägarvy
         button_switch_to_owner_view = ttk.Button(self.frame_main_customer, text="Växla till ägar vy", command=self.switch_to_owner_view)
         button_switch_to_owner_view.pack()
 
-        # Boka tid frame
+        # Frame för att boka tid
         self.booking_frame = ttk.Frame(self.frame_main_customer)
         self.booking_frame.pack(side=tk.LEFT)
 
-        # Tillgängliga tider frame
+        # Frame för tillgängliga tider
         self.available_bookings_frame = ttk.Frame(self.frame_main_customer)
         self.available_bookings_frame.pack(side=tk.RIGHT)
 
-        # Tillgängliga tider titel
+        # Label för tillgängliga tider
         self.available_bookings_title = ttk.Label(self.available_bookings_frame, text="Tillgängliga tider", font=("", 25))
         self.available_bookings_title.pack(side=tk.TOP)
 
-        # Tillgängliga tider table
+        # Treeview för tillgängliga tider
         self.available_bookings_table = ttk.Treeview(self.available_bookings_frame)
         self.available_bookings_table.pack(fill=tk.BOTH, expand=True)
 
-        # Boknings ID
+        # Variabel för vald boknings ID
         self.booking_id = tk.StringVar()
 
-        # Körs när en treeview selektion görs/ändras
+        # Körs när användaren väljer en tid i treeview:en
         def onChange(event):
+            # Hanterar val av tid i tabellen över tillgängliga tider
             treeview = event.widget
             selected = treeview.selection()
 
             if selected:
+                # Hämta värden för vald rad
                 date, time, _ = treeview.item(selected, "values") # Delar upp den valda treeview raden (tupel med värden) till variabler
 
-                id = treeview.focus() # Boknings ID för fokuserad treeview rad
+                # Boknings ID för vald/fokuserad treeview rad
+                id = treeview.focus()
 
-                # Sätter in dem nya värderna
+                # Uppdatera valda värden
                 self.booking_id.set(id)
                 self.active_booking_date.set(date)
                 self.active_booking_time.set(time)
 
+        # Hämta och fyll treeview med tillgängliga tider
         bookings = self.booking_repo.get_available_bookings()
-
         columns = ("Datum", "Tid", "")
-
         self.available_bookings_table['columns'] = columns
 
-        # Döljer en första tom kolumn (#0)
+        # Dölj den första kolumnen (#0)
         self.available_bookings_table.column("#0", width=0, stretch=False)
 
         for column in columns:
+            # Konfigurera kolumner
             self.available_bookings_table.column(column, width=100, anchor="center")
             self.available_bookings_table.heading(column, text=column)
 
         for booking in bookings:
+            # Lägg till rader i treeview
             row = [
                 booking["date"],  # Map "Datum" to "date"
                 booking["time"],  # Map "Tid" to "time"
@@ -117,9 +128,10 @@ class App:
             ]
             self.available_bookings_table.insert("", "end", values=row, iid=booking["id"])
         
+        # Bind välj-funktion till treeview
         self.available_bookings_table.bind("<<TreeviewSelect>>", onChange)
 
-        # Boka tid titel
+        # Label för boka tid
         self.booking_title = ttk.Label(self.booking_frame, text="Boka tid", font=("", 25))
         self.booking_title.grid(columnspan=2, pady=(0, 10))
 
